@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ScrumAppConfig(AppConfig):
-    name = 'scrum_app'
+    name = "scrum_app"

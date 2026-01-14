@@ -1,14 +1,15 @@
 from django.contrib import admin
-from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.urls import path
+
 from scrum_app.views import (
-    register_view, 
     home_view,
-    project_list_view,
-    project_detail_view,
     project_create_view,
-    project_update_view,
     project_delete_view,
+    project_detail_view,
+    project_list_view,
+    project_update_view,
+    register_view,
 )
 
 urlpatterns = [
@@ -17,7 +18,6 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", register_view, name="register"),
-    
     # Project URLs
     path("projects/", project_list_view, name="project_list"),
     path("projects/new/", project_create_view, name="project_create"),
