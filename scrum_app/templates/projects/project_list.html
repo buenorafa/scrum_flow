@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Meus Projetos - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-folder"></i> Meus Projetos
+        </h2>
+        <a href="{% url 'project_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Novo Projeto
+        </a>
+    </div>
+
+    {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-folder-fill text-primary"></i> 
+                                {{ project.name }}
+                            </h5>
+                            <p class="card-text text-muted">
+                                {% if project.description %}
+                                    {{ project.description|truncatewords:20 }}
+                                {% else %}
+                                    <em>Sem descrição</em>
+                                {% endif %}
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar"></i> 
+                                    Criado em {{ project.created_at|date:"d/m/Y" }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'project_detail' project.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a>
+                                <div>
+                                    <a href="{% url 'project_update' project.pk %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Excluir
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            Você ainda não criou nenhum projeto. Clique em "Novo Projeto" para começar!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

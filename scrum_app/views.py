@@ -3,7 +3,9 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+from .models import Project
+from .forms import ProjectForm
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -78,3 +80,77 @@ def register_view(request):
 def home_view(request):
     """View da página inicial."""
     return render(request, "home.html")
+
+
+# Project CRUD Views
+
+@login_required
+def project_list_view(request):
+    """View to list all projects owned by the current user."""
+    projects = Project.objects.filter(owner=request.user)
+    return render(request, "projects/project_list.html", {"projects": projects})
+
+
+@login_required
+def project_detail_view(request, pk):
+    """View to display project details."""
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    return render(request, "projects/project_detail.html", {"project": project})
+
+
+@login_required
+def project_create_view(request):
+    """View to create a new project."""
+    if request.method == "POST":
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.owner = request.user
+            project.save()
+            messages.success(request, f'Projeto "{project.name}" criado com sucesso!')
+            return redirect("project_detail", pk=project.pk)
+    else:
+        form = ProjectForm()
+    
+    return render(request, "projects/project_form.html", {
+        "form": form,
+        "title": "Novo Projeto",
+        "button_text": "Criar Projeto"
+    })
+
+
+@login_required
+def project_update_view(request, pk):
+    """View to update an existing project."""
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Projeto "{project.name}" atualizado com sucesso!')
+            return redirect("project_detail", pk=project.pk)
+    else:
+        form = ProjectForm(instance=project)
+    
+    return render(request, "projects/project_form.html", {
+        "form": form,
+        "title": "Editar Projeto",
+        "button_text": "Salvar Alterações",
+        "project": project
+    })
+
+
+@login_required
+def project_delete_view(request, pk):
+    """View to delete a project."""
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    
+    if request.method == "POST":
+        project_name = project.name
+        project.delete()
+        messages.success(request, f'Projeto "{project_name}" excluído com sucesso!')
+        return redirect("project_list")
+    
+    return render(request, "projects/project_confirm_delete.html", {"project": project})
+

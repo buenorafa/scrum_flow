@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }} - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'project_list' %}">Projetos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ project.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="bi bi-folder-fill"></i> {{ project.name }}
+                </h3>
+                <div>
+                    <a href="{% url 'project_update' project.pk %}" class="btn btn-light btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'project_delete' project.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Excluir
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong><i class="bi bi-person"></i> Proprietário:</strong> {{ project.owner.username }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong><i class="bi bi-calendar"></i> Criado em:</strong> {{ project.created_at|date:"d/m/Y às H:i" }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <h5><i class="bi bi-file-text"></i> Descrição</h5>
+            {% if project.description %}
+                <p class="text-muted">{{ project.description|linebreaks }}</p>
+            {% else %}
+                <p class="text-muted"><em>Nenhuma descrição fornecida.</em></p>
+            {% endif %}
+
+            <hr>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                Novas funcionalidades para este projeto serão adicionadas em breve!
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'project_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar para Projetos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
