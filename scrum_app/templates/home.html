@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Início - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="jumbotron bg-light p-5 rounded">
+                <h1 class="display-4">
+                    <i class="bi bi-kanban text-primary"></i> 
+                    Bem-vindo ao Scrum Flow!
+                </h1>
+                <p class="lead">Sistema de gerenciamento ágil de projetos</p>
+                <hr class="my-4">
+                <p>Você está conectado como <strong>{{ user.username }}</strong>.</p>
+                <p>Em breve, novas funcionalidades estarão disponíveis aqui.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

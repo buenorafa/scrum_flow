@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-kanban text-primary" style="font-size: 3rem;"></i>
+                            <h3 class="mt-2">Scrum Flow</h3>
+                            <p class="text-muted">Faça login para continuar</p>
+                        </div>
+
+                        {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Usuário ou senha incorretos. Tente novamente.
+                            </div>
+                        {% endif %}
+
+                        <form method="post" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">
+                                    <i class="bi bi-person"></i> Usuário
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="id_username" 
+                                       name="username" 
+                                       placeholder="Digite seu usuário"
+                                       required 
+                                       autofocus>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_password" class="form-label">
+                                    <i class="bi bi-lock"></i> Senha
+                                </label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="id_password" 
+                                       name="password" 
+                                       placeholder="Digite sua senha"
+                                       required>
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-box-arrow-in-right"></i> Entrar
+                                </button>
+                            </div>
+
+                            <input type="hidden" name="next" value="{{ next }}">
+                        </form>
+
+                        <hr>
+
+                        <div class="text-center">
+                            <p class="mb-0">Não tem uma conta?</p>
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm mt-2">
+                                <i class="bi bi-person-plus"></i> Criar conta
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
