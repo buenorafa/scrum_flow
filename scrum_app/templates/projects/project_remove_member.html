@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Remover Membro - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'project_list' %}">Projetos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'project_members' project.pk %}">Membros</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Remover Membro</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Confirmar Remoção
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Atenção!</strong> Esta ação removerá o membro do projeto.
+                    </div>
+
+                    <p>Você tem certeza que deseja remover o seguinte membro do projeto <strong>{{ project.name }}</strong>?</p>
+                    
+                    <div class="card bg-light mt-3 mb-3">
+                        <div class="card-body text-center">
+                            <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                            <h5 class="mt-2 mb-0">{{ member.user.username }}</h5>
+                            {% if member.user.email %}
+                                <p class="text-muted mb-0">{{ member.user.email }}</p>
+                            {% endif %}
+                            <small class="text-muted">Membro desde {{ member.joined_at|date:"d/m/Y" }}</small>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'project_members' project.pk %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sim, Remover Membro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

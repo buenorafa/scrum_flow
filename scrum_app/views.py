@@ -3,10 +3,11 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import ProjectForm
-from .models import Project
+from .forms import AddMemberForm, ProjectForm
+from .models import Project, ProjectMember
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -161,3 +162,84 @@ def project_delete_view(request, pk):
         return redirect("project_list")
 
     return render(request, "projects/project_confirm_delete.html", {"project": project})
+
+
+# Project Members Views
+
+
+@login_required
+def project_members_view(request, pk):
+    """View to list all members of a project with pagination."""
+    project = get_object_or_404(Project, pk=pk)
+
+    # Check if user is member or owner
+    if not project.is_member(request.user) and not project.is_owner(request.user):
+        messages.error(
+            request, "Você não tem permissão para ver os membros deste projeto."
+        )
+        return redirect("project_list")
+
+    # Get all members including owner
+    members_list = list(project.members.select_related("user").all())
+
+    # Paginate members
+    paginator = Paginator(members_list, 10)  # 10 members per page
+    page_number = request.GET.get("page")
+    members_page = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "projects/project_members.html",
+        {
+            "project": project,
+            "members_page": members_page,
+            "is_owner": project.is_owner(request.user),
+        },
+    )
+
+
+@login_required
+def project_add_member_view(request, pk):
+    """View to add a member to a project. Only owner can add members."""
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+
+    if request.method == "POST":
+        form = AddMemberForm(request.POST, project=project)
+        if form.is_valid():
+            user = form.cleaned_data["user"]
+            ProjectMember.objects.create(project=project, user=user)
+            messages.success(request, f"{user.username} foi adicionado ao projeto!")
+            return redirect("project_members", pk=project.pk)
+    else:
+        form = AddMemberForm(project=project)
+
+    return render(
+        request,
+        "projects/project_add_member.html",
+        {
+            "project": project,
+            "form": form,
+        },
+    )
+
+
+@login_required
+def project_remove_member_view(request, pk, member_id):
+    """View to remove a member from a project. Only owner can remove members."""
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    member = get_object_or_404(ProjectMember, pk=member_id, project=project)
+
+    if request.method == "POST":
+        username = member.user.username
+        member.delete()
+        messages.success(request, f"{username} foi removido do projeto!")
+        return redirect("project_members", pk=project.pk)
+
+    return render(
+        request,
+        "projects/project_remove_member.html",
+        {
+            "project": project,
+            "member": member,
+        },
+    )

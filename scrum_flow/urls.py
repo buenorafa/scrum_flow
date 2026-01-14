@@ -4,10 +4,13 @@ from django.urls import path
 
 from scrum_app.views import (
     home_view,
+    project_add_member_view,
     project_create_view,
     project_delete_view,
     project_detail_view,
     project_list_view,
+    project_members_view,
+    project_remove_member_view,
     project_update_view,
     register_view,
 )
@@ -24,4 +27,16 @@ urlpatterns = [
     path("projects/<int:pk>/", project_detail_view, name="project_detail"),
     path("projects/<int:pk>/edit/", project_update_view, name="project_update"),
     path("projects/<int:pk>/delete/", project_delete_view, name="project_delete"),
+    # Project Members URLs
+    path("projects/<int:pk>/members/", project_members_view, name="project_members"),
+    path(
+        "projects/<int:pk>/members/add/",
+        project_add_member_view,
+        name="project_add_member",
+    ),
+    path(
+        "projects/<int:pk>/members/<int:member_id>/remove/",
+        project_remove_member_view,
+        name="project_remove_member",
+    ),
 ]

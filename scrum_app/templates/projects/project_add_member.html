@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Membro - {{ project.name }} - Scrum Flow{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'project_list' %}">Projetos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'project_detail' project.pk %}">{{ project.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'project_members' project.pk %}">Membros</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Adicionar Membro</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus"></i> Adicionar Membro
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if form.fields.user.queryset.count > 0 %}
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.user.id_for_label }}" class="form-label">
+                                    {{ form.user.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.user }}
+                                {% if form.user.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.user.errors %}
+                                            <i class="bi bi-exclamation-circle"></i> {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Selecione um usuário para adicionar como membro do projeto.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'project_members' project.pk %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Adicionar Membro
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Não há usuários disponíveis para adicionar. Todos os usuários já são membros deste projeto ou você é o único usuário no sistema.
+                        </div>
+                        <a href="{% url 'project_members' project.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
