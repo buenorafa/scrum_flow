@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% block content %}
+<h1>
+  {% if mode == "create" %} Nova Sprint — {{ project.name }} {% else %} Editar
+  Sprint — {{ sprint.name }} {% endif %}
+</h1>
+
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">
+    {% if mode == "create" %}Criar{% else %}Salvar{% endif %}
+  </button>
+  <a href="{% url 'sprint_list' project.id %}">Cancelar</a>
+</form>
+{% endblock %}
