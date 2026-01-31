@@ -14,6 +14,12 @@ from scrum_app.views import (
     project_update_view,
     register_view,
 )
+from scrum_app.views.sprint import (
+    sprint_list_view,
+    sprint_create_view,
+    sprint_detail_view,
+    sprint_update_view,
+    sprint_close_view,)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,4 +45,30 @@ urlpatterns = [
         project_remove_member_view,
         name="project_remove_member",
     ),
+
+    # Sprints
+    path(
+        "projects/<int:project_id>/sprints/",
+        sprint_list_view,
+        name="sprint_list",
+    ),
+    path(
+        "projects/<int:project_id>/sprints/new/",
+        sprint_create_view,
+        name="sprint_create",
+    ),
+    path(
+        "sprints/<int:sprint_id>/",
+        sprint_detail_view,
+        name="sprint_detail",
+    ),
+    path(
+        "sprints/<int:sprint_id>/edit/",
+        sprint_update_view,
+        name="sprint_update",
+    ),
+    path(
+        "sprints/<int:sprint_id>/close/",
+        sprint_close_view,
+        name="sprint_close",)
 ]

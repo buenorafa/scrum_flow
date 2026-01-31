@@ -14,6 +14,14 @@ from .project_member import (
     project_remove_member_view,
 )
 
+from .sprint import (
+    sprint_list_view,
+    sprint_detail_view,
+    sprint_create_view,
+    sprint_update_view, 
+    sprint_close_view
+)
+
 __all__ = [
     # Auth views
     "register_view",
@@ -28,4 +36,10 @@ __all__ = [
     "project_members_view",
     "project_add_member_view",
     "project_remove_member_view",
+    # Sprint views
+    "sprint_list_view",
+    "sprint_detail_view",
+    "sprint_create_view",
+    "sprint_update_view", 
+    "sprint_close_view",
 ]

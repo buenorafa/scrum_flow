@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Project, ProjectMember
+from .models import Project, ProjectMember, Sprint
 
 
 @admin.register(Project)
@@ -37,3 +37,11 @@ class ProjectMemberAdmin(admin.ModelAdmin):
             {"fields": ("joined_at",), "classes": ("collapse",)},
         ),
     )
+    
+
+@admin.register(Sprint)
+class SprintAdmin(admin.ModelAdmin):
+    list_display = ("name", "project", "status", "start_date", "end_date", "created_at")
+    list_filter = ("status", "project")
+    search_fields = ("name", "project__name")
+    ordering = ("-start_date",)

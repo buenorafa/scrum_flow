@@ -1,0 +1,76 @@
+{% extends 'base.html' %} {% block title %}Sprints - Scrum Flow{% endblock %}
+{%block content %}
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'project_detail' project.pk %}">{{ project.name}}</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Sprints</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-folder"></i> Sprints</h2>
+    <a href="{% url 'sprint_create' project.id %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Nova Sprint
+    </a>
+  </div>
+
+  {% if page_obj %}
+  <div class="row">
+    {% for sprint in page_obj %}
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="bi bi-folder-fill text-primary"></i>
+            {{ sprint.name }}
+          </h5>
+          <p class="card-text text-muted">
+            {% if sprint.description %} {{ sprint.description|truncatewords:20}}
+            {% else %}
+            <em>Sem descrição</em>
+            {% endif %}
+          </p>
+          <p class="card-text">
+            <small class="text-muted">
+              <i class="bi bi-calendar"></i>
+              Criado em {{ sprint.created_at|date:"d/m/Y" }}
+            </small>
+          </p>
+          <span
+            class="badge {% if sprint.status == 'PLANNING' %} bg-warning text-dark {% elif sprint.status == 'ACTIVE' %} bg-primary {% elif sprint.status == 'CLOSED' %} bg-secondary {% else %} bg-light text-dark {% endif %}"
+          >
+            {{ sprint.get_status_display }}
+          </span>
+        </div>
+        <div class="card-footer bg-white border-top-0">
+          <div class="d-flex justify-content-between">
+            <a
+              href="{% url 'sprint_detail' sprint.id %}"
+              class="btn btn-sm btn-outline-primary"
+            >
+              <i class="bi bi-eye"></i> Ver
+            </a>
+            <div>
+              <a
+                href="{% url 'sprint_update' sprint.id %}"
+                class="btn btn-sm btn-outline-secondary"
+              >
+                <i class="bi bi-pencil"></i> Editar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle"></i>
+    Você ainda não criou nenhuma sprint. Clique em "Nova Sprint" para começar!
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
