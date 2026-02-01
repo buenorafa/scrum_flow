@@ -22,6 +22,15 @@ from scrum_app.views.sprint import (
     sprint_list_view,
     sprint_update_view,
 )
+from scrum_app.views.task import (
+    task_comment_delete_view,
+    task_create_view,
+    task_delete_view,
+    task_detail_view,
+    task_kanban_view,
+    task_update_status_view,
+    task_update_view,
+)
 from scrum_app.views.user_story import (
     product_backlog_view,
     sprint_backlog_view,
@@ -125,5 +134,41 @@ urlpatterns = [
         "user-stories/<int:pk>/move/",
         user_story_move_view,
         name="user_story_move",
+    ),
+    # Task URLs
+    path(
+        "user-stories/<int:user_story_pk>/kanban/",
+        task_kanban_view,
+        name="task_kanban",
+    ),
+    path(
+        "user-stories/<int:user_story_pk>/tasks/new/",
+        task_create_view,
+        name="task_create",
+    ),
+    path(
+        "tasks/<int:pk>/",
+        task_detail_view,
+        name="task_detail",
+    ),
+    path(
+        "tasks/<int:pk>/edit/",
+        task_update_view,
+        name="task_update",
+    ),
+    path(
+        "tasks/<int:pk>/delete/",
+        task_delete_view,
+        name="task_delete",
+    ),
+    path(
+        "tasks/<int:pk>/update-status/",
+        task_update_status_view,
+        name="task_update_status",
+    ),
+    path(
+        "tasks/comments/<int:pk>/delete/",
+        task_comment_delete_view,
+        name="task_comment_delete",
     ),
 ]

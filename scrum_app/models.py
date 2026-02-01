@@ -297,3 +297,105 @@ class UserStory(models.Model):
         self.sprint_backlog = None
         self.product_backlog = product_backlog
         self.save()
+
+
+class Task(models.Model):
+    """Model representing a task within a user story."""
+
+    class Status(models.TextChoices):
+        TODO = "TODO", "A Fazer"
+        IN_PROGRESS = "IN_PROGRESS", "Em Progresso"
+        DONE = "DONE", "Concluído"
+
+    class Priority(models.TextChoices):
+        LOW = "LOW", "Baixa"
+        MEDIUM = "MEDIUM", "Média"
+        HIGH = "HIGH", "Alta"
+
+    user_story = models.ForeignKey(
+        UserStory,
+        on_delete=models.CASCADE,
+        related_name="tasks",
+        verbose_name="User Story",
+    )
+
+    title = models.CharField(max_length=200, verbose_name="Título")
+    description = models.TextField(verbose_name="Descrição", blank=True)
+
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_tasks",
+        verbose_name="Responsável",
+    )
+
+    status = models.CharField(
+        max_length=15,
+        choices=Status.choices,
+        default=Status.TODO,
+        verbose_name="Status",
+    )
+
+    priority = models.CharField(
+        max_length=10,
+        choices=Priority.choices,
+        default=Priority.MEDIUM,
+        verbose_name="Prioridade",
+    )
+
+    estimated_hours = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Horas Estimadas",
+        help_text="Estimativa de horas para completar a task",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última atualização")
+
+    objects: models.Manager["Task"]
+
+    class Meta:
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
+        ordering = ["-priority", "status", "-created_at"]
+
+    def __str__(self) -> str:
+        return str(self.title)
+
+
+class TaskComment(models.Model):
+    """Model representing a comment on a task."""
+
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="Task",
+    )
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="task_comments",
+        verbose_name="Autor",
+    )
+
+    content = models.TextField(verbose_name="Comentário")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última atualização")
+
+    objects: models.Manager["TaskComment"]
+
+    class Meta:
+        verbose_name = "Comentário"
+        verbose_name_plural = "Comentários"
+        ordering = ["created_at"]
+
+    def __str__(self) -> str:
+        # pylint: disable=no-member
+        return f"Comentário de {self.author.username} em {self.task.title}"

@@ -15,6 +15,8 @@ from scrum_app.models import (
     ProjectMember,
     Sprint,
     SprintBacklog,
+    Task,
+    TaskComment,
     UserStory,
 )
 
@@ -61,6 +63,8 @@ class Command(BaseCommand):
 
         if options["clear"]:
             self.stdout.write(self.style.WARNING("Clearing existing data..."))
+            TaskComment.objects.all().delete()
+            Task.objects.all().delete()
             UserStory.objects.all().delete()
             SprintBacklog.objects.all().delete()
             ProductBacklog.objects.all().delete()
@@ -246,10 +250,84 @@ class Command(BaseCommand):
                     f'  ✓ Created {num_sprint_stories} user stories for sprint backlog of "{sprint.name}"'
                 )
 
+        # Create tasks for user stories
+        self.stdout.write("\nCreating tasks for user stories...")
+        total_tasks = 0
+        total_comments = 0
+
+        task_titles = [
+            "Criar interface",
+            "Implementar lógica",
+            "Escrever testes",
+            "Documentar código",
+            "Revisar código",
+            "Corrigir bugs",
+            "Otimizar performance",
+            "Adicionar validações",
+            "Configurar ambiente",
+            "Deploy em produção",
+        ]
+
+        task_priorities = [choice[0] for choice in Task.Priority.choices]
+        task_statuses = [choice[0] for choice in Task.Status.choices]
+
+        all_user_stories = UserStory.objects.all()
+
+        for user_story in all_user_stories:
+            # Get project to assign tasks to members
+            if user_story.product_backlog:
+                project = user_story.product_backlog.project
+            else:
+                project = user_story.sprint_backlog.sprint.project
+
+            # Get project members
+            member_ids = list(project.members.values_list("user_id", flat=True)) + [
+                project.owner.id
+            ]
+            project_members = User.objects.filter(id__in=member_ids)
+
+            # Create 2-5 tasks per user story
+            num_tasks = fake.random_int(min=2, max=5)
+
+            for _ in range(num_tasks):
+                task = Task.objects.create(
+                    user_story=user_story,
+                    title=fake.random_element(elements=task_titles),
+                    description=fake.text(max_nb_chars=150),
+                    assigned_to=(
+                        fake.random_element(elements=list(project_members))
+                        if fake.boolean(chance_of_getting_true=70)
+                        else None
+                    ),
+                    status=fake.random_element(elements=task_statuses),
+                    priority=fake.random_element(elements=task_priorities),
+                    estimated_hours=(
+                        fake.random_element(elements=[0.5, 1, 2, 3, 4, 5, 8])
+                        if fake.boolean(chance_of_getting_true=80)
+                        else None
+                    ),
+                )
+                total_tasks += 1
+
+                # Add 0-3 comments to each task
+                num_comments = fake.random_int(min=0, max=3)
+                for _ in range(num_comments):
+                    TaskComment.objects.create(
+                        task=task,
+                        author=fake.random_element(elements=list(project_members)),
+                        content=fake.text(max_nb_chars=100),
+                    )
+                    total_comments += 1
+
+        self.stdout.write(
+            f"  ✓ Created {total_tasks} tasks with {total_comments} comments"
+        )
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"\n✅ Successfully created {len(users)} users, {total_projects} projects, "
-                f"{total_sprints} sprints, and {total_stories} user stories!"
+                f"{total_sprints} sprints, {total_stories} user stories, "
+                f"{total_tasks} tasks, and {total_comments} comments!"
             )
         )
         self.stdout.write(
