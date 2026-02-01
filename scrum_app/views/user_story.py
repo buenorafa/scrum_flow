@@ -2,6 +2,7 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from scrum_app.forms.user_story_forms import MoveUserStoryForm, UserStoryForm
@@ -23,12 +24,19 @@ def product_backlog_view(request, project_pk):
     product_backlog, _ = ProductBacklog.objects.get_or_create(project=project)
 
     # Get all user stories in product backlog
-    user_stories = product_backlog.user_stories.all()
+    user_stories = product_backlog.user_stories.all().order_by(
+        "-priority", "-created_at"
+    )
+
+    # Add pagination
+    paginator = Paginator(user_stories, 10)  # 10 user stories per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "project": project,
         "product_backlog": product_backlog,
-        "user_stories": user_stories,
+        "page_obj": page_obj,
     }
 
     return render(request, "backlog/product_backlog.html", context)
@@ -49,13 +57,20 @@ def sprint_backlog_view(request, sprint_pk):
     sprint_backlog, _ = SprintBacklog.objects.get_or_create(sprint=sprint)
 
     # Get all user stories in sprint backlog
-    user_stories = sprint_backlog.user_stories.all()
+    user_stories = sprint_backlog.user_stories.all().order_by(
+        "-priority", "-created_at"
+    )
+
+    # Add pagination
+    paginator = Paginator(user_stories, 10)  # 10 user stories per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "project": project,
         "sprint": sprint,
         "sprint_backlog": sprint_backlog,
-        "user_stories": user_stories,
+        "page_obj": page_obj,
     }
 
     return render(request, "backlog/sprint_backlog.html", context)

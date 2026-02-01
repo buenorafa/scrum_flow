@@ -2,6 +2,7 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from ..forms import ProjectForm
@@ -13,7 +14,13 @@ from ..services import ProjectService
 def project_list_view(request):
     """View to list all projects owned by the current user."""
     projects = ProjectService.get_user_projects(request.user)
-    return render(request, "projects/project_list.html", {"projects": projects})
+
+    # Add pagination
+    paginator = Paginator(projects, 10)  # 10 projects per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "projects/project_list.html", {"page_obj": page_obj})
 
 
 @login_required
