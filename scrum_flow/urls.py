@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
@@ -56,7 +57,6 @@ urlpatterns = [
         project_remove_member_view,
         name="project_remove_member",
     ),
-
     # Sprints
     path(
         "projects/<int:project_id>/sprints/",

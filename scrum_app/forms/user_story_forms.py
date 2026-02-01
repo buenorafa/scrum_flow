@@ -8,6 +8,7 @@ from scrum_app.models import UserStory
 class UserStoryForm(forms.ModelForm):
     """Form for creating and editing user stories."""
 
+    # pylint: disable=missing-class-docstring
     class Meta:
         model = UserStory
         fields = [
@@ -82,8 +83,6 @@ class MoveUserStoryForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if project:
-            from scrum_app.models import Sprint  # noqa: F401
-
             self.fields["sprint"].choices = [("", "Selecione uma sprint")] + [
                 (sprint.id, str(sprint)) for sprint in project.sprints.all()
             ]

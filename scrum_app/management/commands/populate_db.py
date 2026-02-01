@@ -19,7 +19,7 @@ from scrum_app.models import (
 )
 
 
-# pylint: disable=no-member
+# pylint: disable=no-member, missing-class-docstring
 class Command(BaseCommand):
     help = "Populate database with fake users and projects for testing"
 
@@ -214,6 +214,7 @@ class Command(BaseCommand):
                 )
                 total_stories += 1
 
+            # pylint: disable=line-too-long
             self.stdout.write(
                 f'  ✓ Created {num_product_stories} user stories for product backlog of "{project.name}"'
             )
@@ -240,6 +241,7 @@ class Command(BaseCommand):
                     )
                     total_stories += 1
 
+                # pylint: disable=line-too-long
                 self.stdout.write(
                     f'  ✓ Created {num_sprint_stories} user stories for sprint backlog of "{sprint.name}"'
                 )

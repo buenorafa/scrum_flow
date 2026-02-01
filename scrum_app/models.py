@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -23,6 +24,7 @@ class Project(models.Model):
     objects: models.Manager["Project"]
     members: models.Manager["ProjectMember"]
 
+    # pylint: disable=missing-class-docstring
     class Meta:
         verbose_name = "Projeto"
         verbose_name_plural = "Projetos"
@@ -61,6 +63,7 @@ class ProjectMember(models.Model):
 
     objects: models.Manager["ProjectMember"]
 
+    # pylint: disable=missing-class-docstring
     class Meta:
         verbose_name = "Membro do Projeto"
         verbose_name_plural = "Membros do Projeto"
@@ -73,6 +76,7 @@ class ProjectMember(models.Model):
         )
 
 
+# pylint: disable=missing-class-docstring
 class Sprint(models.Model):
     class Status(models.TextChoices):
         PLANNING = "PLANNING", "Planning"
@@ -188,7 +192,7 @@ class UserStory(models.Model):
 
     title = models.CharField(max_length=200, verbose_name="Título")
     description = models.TextField(verbose_name="Descrição")
-    
+
     # User story format: "Como [tipo de usuário], eu quero [objetivo] para [benefício]"
     as_a = models.CharField(
         max_length=200,
@@ -273,7 +277,7 @@ class UserStory(models.Model):
             raise ValidationError(
                 "Uma User Story não pode estar em Product Backlog e Sprint Backlog simultaneamente."
             )
-        
+
         # Uma user story deve estar em pelo menos um backlog
         if not self.product_backlog and not self.sprint_backlog:
             raise ValidationError(
