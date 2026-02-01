@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+
 
 class Project(models.Model):
     """Model representing a project in the Scrum Flow application."""
@@ -101,6 +102,8 @@ class Sprint(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data de criação")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Última atualização")
 
+    objects: models.Manager["Sprint"]
+
     class Meta:
         verbose_name = "Sprint"
         verbose_name_plural = "Sprints"
@@ -112,7 +115,9 @@ class Sprint(models.Model):
     def clean(self):
         # validação de datas
         if self.start_date and self.end_date and self.end_date < self.start_date:
-            raise ValidationError({"end_date": "A data de fim não pode ser anterior à data de início."})
+            raise ValidationError(
+                {"end_date": "A data de fim não pode ser anterior à data de início."}
+            )
 
         # opcional (mas bem Scrum): só 1 sprint ACTIVE por projeto
         if self.status == self.Status.ACTIVE:
@@ -120,4 +125,6 @@ class Sprint(models.Model):
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.exists():
-                raise ValidationError({"status": "Já existe uma Sprint ativa neste projeto."})
+                raise ValidationError(
+                    {"status": "Já existe uma Sprint ativa neste projeto."}
+                )
