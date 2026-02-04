@@ -14,9 +14,6 @@ class ProjectService:
         """
         Get all projects where the user is owner OR a project member.
 
-        Args:
-            user: User instance
-
         Returns:
             QuerySet: Projects visible to the user
         """
@@ -31,30 +28,15 @@ class ProjectService:
         """
         Get a project by ID (authorization must be handled in the view).
 
-        Args:
-            project_id: Project primary key
-
         Returns:
             Project: The project instance
-
-        Raises:
-            Project.DoesNotExist: If project not found
         """
         return Project.objects.get(pk=project_id)
 
     @staticmethod
     @transaction.atomic
     def create_project(form, owner):
-        """
-        Create a new project.
-
-        Args:
-            form: ProjectForm with valid data
-            owner: User instance (project owner)
-
-        Returns:
-            Project: The created project instance
-        """
+        """Create a new project."""
         project = form.save(commit=False)
         project.owner = owner
         project.save()
@@ -63,15 +45,7 @@ class ProjectService:
     @staticmethod
     @transaction.atomic
     def update_project(form):
-        """
-        Update an existing project.
-
-        Args:
-            form: ProjectForm with valid data and instance
-
-        Returns:
-            Project: The updated project instance
-        """
+        """Update an existing project."""
         return form.save()
 
     @staticmethod
@@ -80,13 +54,7 @@ class ProjectService:
         """
         Delete a project.
 
-        NOTE: Authorization should be enforced in the view (owner-only).
-
-        Args:
-            project: Project instance to delete
-
-        Returns:
-            str: The name of the deleted project
+        NOTE: Authorization should be enforced in the view.
         """
         project_name = project.name
         project.delete()
@@ -97,12 +65,6 @@ class ProjectService:
         """
         Check if user has access to a project (owner OR member).
 
-        Args:
-            project: Project instance
-            user: User instance
-
-        Returns:
-            bool: True if user is owner or member, False otherwise
+        NOTE: Project.is_member(user) already returns True for owner.
         """
-        # is_member already returns True for owner in your model implementation
         return project.is_member(user)
